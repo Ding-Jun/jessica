@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router'
 import Menu from 'antd/lib/menu'
 import Icon from 'antd/lib/icon'
 export default class Navigation extends React.Component {
@@ -19,7 +20,7 @@ export default class Navigation extends React.Component {
 
 	render() {
 		return (
-			<Menu onClick={this.handleClick} 
+			<Menu onClick={this.handleClick}
         		selectedKeys={[this.state.current]}
           		mode="horizontal" 
           >
@@ -28,16 +29,20 @@ export default class Navigation extends React.Component {
           </Menu.Item>
           
           <Menu.Item key="index">
-            <Icon type="home" />首页
+            <Link to="/"><Icon type="home" />首页</Link>
+            
           </Menu.Item>
           <Menu.Item key="upload">
-            <Icon type="upload" />上传
+            <Link to="/upload"><Icon type="upload" />上传</Link>
+            
           </Menu.Item>
           <Menu.Item key="report">
-            <Icon type="bar-chart" />报告
+          <Link to="/report"><Icon type="bar-chart" />报告</Link>
+            
           </Menu.Item>
           <Menu.Item key="config">
-            <Icon type="setting" />配置
+          <Link to="/config"><Icon type="setting" />配置</Link>
+            
           </Menu.Item>
         </Menu>
 		)
