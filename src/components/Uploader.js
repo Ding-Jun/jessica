@@ -54,7 +54,9 @@ class Uploader extends React.Component {
       console.log("file", this.refs.dataFile.refs.input.files)
       var fileList = this.refs.dataFile.refs.input.files;
       _.map(fileList, (file) => {
-        console.log(file.name)
+        var suffix = file.name.substring(file.name.lastIndexOf(".") + 1, file.name.length); //获取后缀的
+        console.log(suffix)
+
       })
     }
 
