@@ -1,26 +1,30 @@
 import React from 'react';
-import { Link } from 'react-router'
-import Menu from 'antd/lib/menu'
-import Icon from 'antd/lib/icon'
+import {
+  Link
+} from 'react-router'
+import {
+  Menu,
+  Icon
+} from 'antd'
 export default class Navigation extends React.Component {
-	constructor(props) {
-		super(props);
-		// Operations usually carried out in componentWillMount go here
-		this.state = {
-			current: 'mail'
+  constructor(props) {
+    super(props);
+    // Operations usually carried out in componentWillMount go here
+    this.state = {
+      current: 'mail'
 
-		}
-	}
-	handleClick = (e) => {
-		console.log('click ', e);
-		this.setState({
-			current: e.key
-		});
-	}
+    }
+  }
+  handleClick = (e) => {
+    console.log('click ', e);
+    this.setState({
+      current: e.key
+    });
+  }
 
-	render() {
-		return (
-			<Menu onClick={this.handleClick}
+  render() {
+    return (
+      <Menu onClick={this.handleClick}
         		selectedKeys={[this.state.current]}
           		mode="horizontal" 
           >
@@ -45,7 +49,7 @@ export default class Navigation extends React.Component {
             
           </Menu.Item>
         </Menu>
-		)
-	}
+    )
+  }
 
 }
