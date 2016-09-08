@@ -1,5 +1,6 @@
 import React from 'react';
 import _ from 'lodash'
+import 'whatwg-fetch';
 import Messager from './Messager'
 import {
   Input,
@@ -42,6 +43,11 @@ class Uploader extends React.Component {
 
   }
   handleSubmit(e) {
+    console.log("nextStep function", this.props.nextStep)
+    this.props.nextStep()
+      /*setTimeout(() => {
+        this.props.nextStep
+      }, 2000)*/
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((errors, values) => {
       if (!!errors) {
@@ -50,40 +56,53 @@ class Uploader extends React.Component {
         return;
       }
       Messager.info('提交。。。')
-      //console.log(values);
+        //console.log(values);
       console.log(this.props.form.getFieldsValue());
-       
+      console.log(JSON.stringify(this.props.form.getFieldsValue()));
+      /*
+            fetch('/users', {
+              method: 'POST',
+              body: JSON.stringify(this.props.form.getFieldsValue())
+            }).then(function(response) {
+              return response.json();
+            }).then(function(data) {
+              console.log(data);
+            }).catch(function(e) {
+              console.log("Oops, error");
+            });*/
+
+
     });
   }
   handleReturn() {
     history.back(-1)
   }
   doValidateFile(rule, value, callback) {
-    var isCompleted=false;
+    var isCompleted = false;
     //console.log('changed')
     if (!value) {
       callback();
-      isCompleted=true;
+      isCompleted = true;
     } else {
 
       console.log("file", this.refs.dataFile.refs.input.files)
       var fileList = this.refs.dataFile.refs.input.files;
 
-      for(let i=0;i<fileList.length;i++){
-        var file=fileList[i];
-        var rs=/(.csv)$/i.test(file.name);
-        if(!rs){
+      for (let i = 0; i < fileList.length; i++) {
+        var file = fileList[i];
+        var rs = /(.csv)$/i.test(file.name);
+        if (!rs) {
           callback([new Error('抱歉，目前仅支持csv格式数据。')]);
-          isCompleted=true;
+          isCompleted = true;
           break;
         }
-        if(file.size > 50*1024*1024){
-          callback([new Error('抱歉，'+file.name+' 太大,超过了限制')]);
-          isCompleted=true;
+        if (file.size > 50 * 1024 * 1024) {
+          callback([new Error('抱歉，' + file.name + ' 太大,超过了限制')]);
+          isCompleted = true;
           break;
         }
       }
-      if(!isCompleted){
+      if (!isCompleted) {
         callback()
       }
     }
@@ -95,7 +114,7 @@ class Uploader extends React.Component {
       getFieldError,
       isFieldValidating
     } = this.props.form;
-    const nameProps = getFieldProps('name', {
+    const nameProps = getFieldProps('reportName', {
       //ref: "fileaa",
       rules: [{
         required: true,
@@ -105,7 +124,7 @@ class Uploader extends React.Component {
         validator: this.reportExists
       }]
     });
-    const fileProps = getFieldProps('file', {
+    const fileProps = getFieldProps('dataFiles', {
       //ref: "fileaa",
       rules: [{
         required: true,
@@ -115,11 +134,11 @@ class Uploader extends React.Component {
         validator: this.doValidateFile.bind(this)
       }]
     });
-    const chipNameProps = getFieldProps('chipName',{
-      initialValue:"undefined"
+    const chipNameProps = getFieldProps('chipName', {
+      initialValue: "undefined"
     });
-    const modeProps = getFieldProps('mode',{
-      initialValue:false
+    const modeProps = getFieldProps('mode', {
+      initialValue: false
     });
     const formItemLayout = {
       labelCol: {
@@ -131,10 +150,10 @@ class Uploader extends React.Component {
     };
     return (
       <Form horizontal>
-        <FormItem ref="fileItem" label="数据文件" required {...formItemLayout} help={isFieldValidating('file') ? '校验中...' : (getFieldError('file') || []).join(', ')} hasFeedback >
-          <Input {...fileProps} name="files" type="file" ref="dataFile" multiple="multiple" /><Button type="ghost" size="default" ><Icon type="file" />选择</Button>
+        <FormItem ref="fileItem" label="数据文件" required {...formItemLayout} help={isFieldValidating('dataFiles') ? '校验中...' : (getFieldError('dataFiles') || []).join(', ')} hasFeedback >
+          <Input {...fileProps} name="dataFiles" type="file" ref="dataFile" multiple="multiple" accept=".csv" /><Button type="ghost" size="default" ><Icon type="file" />选择</Button>
         </FormItem>
-    <FormItem label="报告名称" required {...formItemLayout} help={isFieldValidating('name') ? '校验中...' : (getFieldError('name') || []).join(', ')} hasFeedback >
+    <FormItem label="报告名称" required {...formItemLayout} help={isFieldValidating('reportName') ? '校验中...' : (getFieldError('reportName') || []).join(', ')} hasFeedback >
           <Input {...nameProps} name="reportName" placeholder="数据处理后产生的报告名称"  />
         </FormItem>
           <FormItem label="芯片名称"   {...formItemLayout} help="">
@@ -152,7 +171,7 @@ class Uploader extends React.Component {
           <Checkbox {...modeProps} name="mode">删除FT不良品数据</Checkbox>
         </FormItem>
         <FormItem wrapperCol={{ span: 6 ,offset: 6}}>
-          <Button type="primary" onClick={this.handleSubmit.bind(this)}>确定</Button>
+          <Button type="primary" onClick={this.handleSubmit.bind(this)}>下一步</Button>
           &nbsp;&nbsp;&nbsp;
           <Button type="ghost" onClick={this.handleReturn}>返回</Button>
         </FormItem>
