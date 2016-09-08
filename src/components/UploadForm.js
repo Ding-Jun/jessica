@@ -12,7 +12,7 @@ import {
   Select,
   Tooltip
 } from 'antd'
-
+import $ from 'jquery'
 const FormItem = Form.Item;
 const createForm = Form.create;
 const Option = Select.Option;
@@ -44,7 +44,7 @@ class Uploader extends React.Component {
   }
   handleSubmit(e) {
     console.log("nextStep function", this.props.nextStep)
-    this.props.nextStep()
+    //this.props.nextStep()
       /*setTimeout(() => {
         this.props.nextStep
       }, 2000)*/
@@ -59,8 +59,12 @@ class Uploader extends React.Component {
         //console.log(values);
       console.log(this.props.form.getFieldsValue());
       console.log(JSON.stringify(this.props.form.getFieldsValue()));
-      /*
-            fetch('/users', {
+     /* $.ajax({
+        url:'/api/user/test'
+      })*/
+            fetch('http://localhost:8080/analysis/rs/user/test', {
+              credentials: 'include',
+              mode: 'no-cors',
               method: 'POST',
               body: JSON.stringify(this.props.form.getFieldsValue())
             }).then(function(response) {
@@ -69,7 +73,7 @@ class Uploader extends React.Component {
               console.log(data);
             }).catch(function(e) {
               console.log("Oops, error");
-            });*/
+            });
 
 
     });
