@@ -1,5 +1,6 @@
 import React from 'react';
 import _ from 'lodash'
+import Messager from './Messager'
 import {
   Input,
   Form,
@@ -40,24 +41,51 @@ class Uploader extends React.Component {
     this.doValidateFile();
 
   }
-  handleSubmit() {
-
+  handleSubmit(e) {
+    e.preventDefault();
+    this.props.form.validateFieldsAndScroll((errors, values) => {
+      if (!!errors) {
+        Messager.error('发现错误，请修改！')
+        console.log('Errors in form!!!');
+        return;
+      }
+      Messager.info('提交。。。')
+      //console.log(values);
+      console.log(this.props.form.getFieldsValue());
+       
+    });
   }
-  handleReset() {
-
+  handleReturn() {
+    history.back(-1)
   }
   doValidateFile(rule, value, callback) {
+    var isCompleted=false;
     //console.log('changed')
     if (!value) {
       callback();
+      isCompleted=true;
     } else {
+
       console.log("file", this.refs.dataFile.refs.input.files)
       var fileList = this.refs.dataFile.refs.input.files;
-      _.map(fileList, (file) => {
-        var suffix = file.name.substring(file.name.lastIndexOf(".") + 1, file.name.length); //获取后缀的
-        console.log(suffix)
 
-      })
+      for(let i=0;i<fileList.length;i++){
+        var file=fileList[i];
+        var rs=/(.csv)$/i.test(file.name);
+        if(!rs){
+          callback([new Error('抱歉，目前仅支持csv格式数据。')]);
+          isCompleted=true;
+          break;
+        }
+        if(file.size > 50*1024*1024){
+          callback([new Error('抱歉，'+file.name+' 太大,超过了限制')]);
+          isCompleted=true;
+          break;
+        }
+      }
+      if(!isCompleted){
+        callback()
+      }
     }
 
   }
@@ -87,6 +115,12 @@ class Uploader extends React.Component {
         validator: this.doValidateFile.bind(this)
       }]
     });
+    const chipNameProps = getFieldProps('chipName',{
+      initialValue:"undefined"
+    });
+    const modeProps = getFieldProps('mode',{
+      initialValue:false
+    });
     const formItemLayout = {
       labelCol: {
         span: 6
@@ -97,29 +131,30 @@ class Uploader extends React.Component {
     };
     return (
       <Form horizontal>
-        <FormItem ref="fileItem" label="数据文件" required {...formItemLayout} help={isFieldValidating('file') ? '校验中...' : (getFieldError('file') || []).join(', ')}>
-          <Input {...fileProps} type="file" ref="dataFile" multiple="multiple" /><Button type="ghost" size="default" ><Icon type="file" />选择</Button>
+        <FormItem ref="fileItem" label="数据文件" required {...formItemLayout} help={isFieldValidating('file') ? '校验中...' : (getFieldError('file') || []).join(', ')} hasFeedback >
+          <Input {...fileProps} name="files" type="file" ref="dataFile" multiple="multiple" /><Button type="ghost" size="default" ><Icon type="file" />选择</Button>
         </FormItem>
-    <FormItem label="报告名称" required {...formItemLayout} help={isFieldValidating('name') ? '校验中...' : (getFieldError('name') || []).join(', ')} >
-          <Input {...nameProps}  placeholder="数据处理后产生的报告名称"  />
+    <FormItem label="报告名称" required {...formItemLayout} help={isFieldValidating('name') ? '校验中...' : (getFieldError('name') || []).join(', ')} hasFeedback >
+          <Input {...nameProps} name="reportName" placeholder="数据处理后产生的报告名称"  />
         </FormItem>
-          <FormItem label="芯片名称"  {...formItemLayout} help="暂时没用">
+          <FormItem label="芯片名称"   {...formItemLayout} help="">
           <Select combobox
-            
-            
+            ref="chipName"
+            name="chipName"
+            {...chipNameProps}
             filterOption={false}
-            placeholder="213123"
+            placeholder="暂时没用"
           >
             {options}
           </Select>
         </FormItem>
         <FormItem label={<span>其他 <Tooltip title="FT+RT混合提交时   删除FT不良品数据"><Icon type="question-circle-o" /></Tooltip></span>} {...formItemLayout}>
-          <Checkbox >删除FT不良品数据</Checkbox>
+          <Checkbox {...modeProps} name="mode">删除FT不良品数据</Checkbox>
         </FormItem>
         <FormItem wrapperCol={{ span: 6 ,offset: 6}}>
-          <Button type="primary" onClick={this.handleSubmit}>确定</Button>
+          <Button type="primary" onClick={this.handleSubmit.bind(this)}>确定</Button>
           &nbsp;&nbsp;&nbsp;
-          <Button type="ghost" onClick={this.handleReset}>返回</Button>
+          <Button type="ghost" onClick={this.handleReturn}>返回</Button>
         </FormItem>
       </Form>
     )
