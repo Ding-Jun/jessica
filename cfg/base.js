@@ -27,11 +27,11 @@ module.exports = {
     publicPath: defaultSettings.publicPath,
     noInfo: false,
     proxy: {
-          '/api/*': {
-              target: 'http://localhost:8080',
-              secure: false
-          }
-        }
+      '/analysis/*': {
+        target: 'http://localhost:8080',
+        secure: false
+      }
+    }
   },
   resolve: {
     extensions: ['', '.js', '.jsx'],

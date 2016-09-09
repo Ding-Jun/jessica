@@ -1,4 +1,7 @@
 import React from 'react';
+import {
+  findDOMNode
+} from 'react-dom'
 import _ from 'lodash'
 import 'whatwg-fetch';
 import Messager from './Messager'
@@ -44,7 +47,7 @@ class Uploader extends React.Component {
   }
   handleSubmit(e) {
     console.log("nextStep function", this.props.nextStep)
-    //this.props.nextStep()
+      //this.props.nextStep()
       /*setTimeout(() => {
         this.props.nextStep
       }, 2000)*/
@@ -59,27 +62,53 @@ class Uploader extends React.Component {
         //console.log(values);
       console.log(this.props.form.getFieldsValue());
       console.log(JSON.stringify(this.props.form.getFieldsValue()));
-     /* $.ajax({
-        url:'/api/user/test'
-      })*/
-            fetch('http://localhost:8080/analysis/rs/user/test', {
-              credentials: 'include',
-              mode: 'no-cors',
-              method: 'POST',
-              body: JSON.stringify(this.props.form.getFieldsValue())
-            }).then(function(response) {
-              return response.json();
-            }).then(function(data) {
-              console.log(data);
-            }).catch(function(e) {
-              console.log("Oops, error");
-            });
+      /* $.ajax({
+         url:'/api/user/test'
+       })*/
+      /*fetch('http://localhost:11239/analysis/rs/user/test', {
+        credentials: 'include',
+        mode: 'no-cors',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        },
+        method: 'POST',
+        body: JSON.stringify(this.props.form.getFieldsValue())
+      }).then(function(response) {
+        console.log(response);
+        return response.json();
+      }).then(function(data) {
+        console.log(data);
+      }).catch(function(e) {
+        console.log("Oops, error");
+      });*/
 
 
     });
   }
   handleReturn() {
-    history.back(-1)
+    var result = fetch('/analysis/rs/user/test')
+    result.then(function(response) {
+        console.log('response', response)
+        console.log('header', response.headers.get('Content-Type'))
+        return response.json()
+      }).then(function(data) {
+        console.log('got data', data)
+      }).catch(function(ex) {
+        console.log('failed', ex)
+      })
+      /*
+          fetch('http://localhost:8080/analysis/rs/user/test', {
+              credentials: 'include',
+              mode: 'no-cors',
+              method: 'POST',
+              body: new FormData(findDOMNode(this))
+            }).then(function(response) {
+              console.log(response);
+              console.log(response.json());
+            })*/
+      // console.log();
+      //history.back(-1)
   }
   doValidateFile(rule, value, callback) {
     var isCompleted = false;
@@ -153,7 +182,7 @@ class Uploader extends React.Component {
       }
     };
     return (
-      <Form horizontal>
+      <Form horizontal encType="multipart/form-data">
         <FormItem ref="fileItem" label="数据文件" required {...formItemLayout} help={isFieldValidating('dataFiles') ? '校验中...' : (getFieldError('dataFiles') || []).join(', ')} hasFeedback >
           <Input {...fileProps} name="dataFiles" type="file" ref="dataFile" multiple="multiple" accept=".csv" /><Button type="ghost" size="default" ><Icon type="file" />选择</Button>
         </FormItem>
@@ -177,7 +206,7 @@ class Uploader extends React.Component {
         <FormItem wrapperCol={{ span: 6 ,offset: 6}}>
           <Button type="primary" onClick={this.handleSubmit.bind(this)}>下一步</Button>
           &nbsp;&nbsp;&nbsp;
-          <Button type="ghost" onClick={this.handleReturn}>返回</Button>
+          <Button type="ghost" onClick={this.handleReturn.bind(this)}>返回</Button>
         </FormItem>
       </Form>
     )
