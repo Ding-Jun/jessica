@@ -1,12 +1,13 @@
-require('normalize.css/normalize.css');
+//require('normalize.css/normalize.css');
 //require('styles/App.css');
 //import 'antd/dist/antd.css';
 import React from 'react';
-
-
+import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import AppBar from 'material-ui/AppBar';
+import RaisedButton from 'material-ui/RaisedButton';
 import Navigation from '../components/Navigation'
-let yeomanImage = require('../images/yeoman.png');
-
 class AppComponent extends React.Component {
 
 

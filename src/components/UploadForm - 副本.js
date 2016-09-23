@@ -182,30 +182,6 @@ class Uploader extends React.Component {
       }
     };
     return (
-      <form role="form">
-      <button type="button" className="btn btn-default" data-toggle="tooltip" data-placement="left" title="Tooltip on left">Tooltip on left</button>
-  <div className="form-group">
-    <label for="exampleInputEmail1">报告名称</label>
-    <input name="reportName" type="text" className="form-control" id="exampleInputEmail1" placeholder="数据处理后产生的报告名称 如: LM358_20160923"/>
-  </div>
-  <div className="form-group">
-    <label for="exampleInputPassword1" >芯片名称</label>
-    <input name="chipName" type="text" className="form-control" id="exampleInputPassword1" placeholder="如: LM358"/>
-
-  </div>
-  <div className="form-group">
-    <label for="exampleInputFile">File input</label>
-    <input name="files" type="file" id="exampleInputFile" placeholder="如: LM358" multiple="multiple" accept=".csv"/>
-    <p className="help-block">Example block-level help text here.</p>
-  </div>
-  <div className="checkbox">
-    <label>
-      <input name="mode" type="checkbox"/> 删除FT不良品数据
-    </label>
-  </div>
-  <button type="submit" className="btn btn-default">提交</button>
-</form>
-      /*
       <Form horizontal encType="multipart/form-data">
         <FormItem ref="fileItem" label="数据文件" required {...formItemLayout} help={isFieldValidating('dataFiles') ? '校验中...' : (getFieldError('dataFiles') || []).join(', ')} hasFeedback >
           <Input {...fileProps} name="dataFiles" type="file" ref="dataFile" multiple="multiple" accept=".csv" /><Button type="ghost" size="default" ><Icon type="file" />选择</Button>
@@ -232,7 +208,7 @@ class Uploader extends React.Component {
           &nbsp;&nbsp;&nbsp;
           <Button type="ghost" onClick={this.handleReturn.bind(this)}>返回</Button>
         </FormItem>
-      </Form>*/
+      </Form>
     )
   }
 }

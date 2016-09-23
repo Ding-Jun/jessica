@@ -1,11 +1,6 @@
 import React from 'react';
-import {
-  Link
-} from 'react-router'
-import {
-  Menu,
-  Icon
-} from 'antd'
+import {Link} from 'react-router'
+
 export default class Navigation extends React.Component {
   constructor(props) {
     super(props);
@@ -24,31 +19,32 @@ export default class Navigation extends React.Component {
 
   render() {
     return (
-      <Menu onClick={this.handleClick}
-        		selectedKeys={[this.state.current]}
-          		mode="horizontal" 
-          >
-          <Menu.Item key="logo">
-            <Icon type="aliwangwang" />FUNTEST数据分析
-          </Menu.Item>
-          
-          <Menu.Item key="index">
-            <Link to="/"><Icon type="home" />首页</Link>
-            
-          </Menu.Item>
-          <Menu.Item key="upload">
-            <Link to="/upload"><Icon type="upload" />上传</Link>
-            
-          </Menu.Item>
-          <Menu.Item key="report">
-          <Link to="/report"><Icon type="bar-chart" />报告</Link>
-            
-          </Menu.Item>
-          <Menu.Item key="config">
-          <Link to="/config"><Icon type="setting" />配置</Link>
-            
-          </Menu.Item>
-        </Menu>
+      <nav className="navbar navbar-default">
+  <div className="container-fluid">
+    <div className="navbar-header">
+       <a className="navbar-brand" href="#">FUNTEST数据分析</a>
+      <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span className="sr-only">Toggle navigation</span>
+        <span className="icon-bar"></span>
+        <span className="icon-bar"></span>
+        <span className="icon-bar"></span>
+      </button>
+    </div>
+    <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      
+      <ul className="nav navbar-nav navbar-right">
+        <li className="active"><Link to="/"><span className="glyphicon glyphicon-user"></span></Link></li>
+      </ul>
+      <ul className="nav navbar-nav navbar-right">
+        <li><Link to="/">首页</Link></li>
+        <li><Link to="/upload">上传</Link></li>
+        <li><Link to="/report">报告</Link></li>
+        <li><Link to="/config">配置</Link></li>
+      </ul>
+      
+    </div>
+  </div>
+</nav>
     )
   }
 

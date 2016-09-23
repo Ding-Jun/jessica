@@ -6,6 +6,12 @@ import App from './components/App';
 import HomeView from './components/HomeView';
 import UploadView from './components/UploadView';
 import ReportView from './components/ReportView';
+
+//css
+//import 'bootstrap/dist/css/bootstrap.css';
+//global var
+var root="/analysis/rs";
+
 // Render the main component into the dom
 ReactDOM.render(
 	<Router history={hashHistory}>
