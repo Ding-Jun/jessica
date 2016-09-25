@@ -1,6 +1,7 @@
 import React from 'react';
 import UploadForm from './UploadForm'
 import UploadProcess from './UploadProcess'
+import UploadResult from './UploadResult'
 import {
   Steps,
   Row,
@@ -15,8 +16,9 @@ export default class UploadView extends React.Component {
     super(props);
     // Operations usually carried out in componentWillMount go here
     this.state = {
-      current: 0
-
+      current: 0,
+      dataInfo:{},
+      result:null
     }
   }
 
@@ -30,14 +32,27 @@ export default class UploadView extends React.Component {
       current: this.state.current - 1
     })
   }
+  setDataInfo(dataInfo){
+    this.setState({
+      dataInfo:dataInfo
+    })
+  }
+  setResult(result){
+    this.setState({
+      result:result
+    })
+  }
   render() {
     var step;
     switch (this.state.current) {
       case 0:
-        step = <UploadForm nextStep={this.nextStep.bind(this)}/>;
+        step = <UploadForm nextStep={this.nextStep.bind(this)} setDataInfo={this.setDataInfo.bind(this)}/>;
         break;
       case 1:
-        step = <UploadProcess nextStep={this.nextStep.bind(this)} preStep={this.preStep.bind(this)}/>;
+        step = <UploadProcess nextStep={this.nextStep.bind(this)} dataInfo={this.state.dataInfo}  preStep={this.preStep.bind(this)} setResult={this.setResult.bind(this)}/>;
+        break;
+      case 2:
+        step = <UploadResult result={this.state.result}/>;
         break;
       default:
         step = <UploadForm nextStep={this.nextStep.bind(this)}/>;

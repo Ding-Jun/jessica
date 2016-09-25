@@ -3,7 +3,7 @@ import {
   findDOMNode
 } from 'react-dom'
 import _ from 'lodash'
-import 'whatwg-fetch';
+import $ from 'jquery'
 import Messager from './Messager'
 import {
   Input,
@@ -15,7 +15,7 @@ import {
   Select,
   Tooltip
 } from 'antd'
-import $ from 'jquery'
+
 const FormItem = Form.Item;
 const createForm = Form.create;
 const Option = Select.Option;
@@ -25,32 +25,7 @@ var options = ['JW1121', 'JW7715', 'JW7705'].map((domain) => {
 });
 
 class Uploader extends React.Component {
-  reportExists(rule, value, callback) {
-    if (!value) {
-      callback();
-    } else {
-      setTimeout(() => {
-        if (value === 'JasonWood') {
-          callback([new Error('抱歉，该名称已存在。')]);
-        } else {
-          callback();
-        }
-      }, 800);
-    }
-  }
-  handleUploa() {
-    console.log('heiehei')
-  }
-  handleChange() {
-    this.doValidateFile();
-
-  }
   handleSubmit(e) {
-    console.log("nextStep function", this.props.nextStep)
-      //this.props.nextStep()
-      /*setTimeout(() => {
-        this.props.nextStep
-      }, 2000)*/
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((errors, values) => {
       if (!!errors) {
@@ -59,58 +34,59 @@ class Uploader extends React.Component {
         return;
       }
       Messager.info('提交。。。')
-        //console.log(values);
-      console.log(this.props.form.getFieldsValue());
-      console.log(JSON.stringify(this.props.form.getFieldsValue()));
-      /* $.ajax({
-         url:'/api/user/test'
-       })*/
-      /*fetch('http://localhost:11239/analysis/rs/user/test', {
-        credentials: 'include',
-        mode: 'no-cors',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-        },
-        method: 'POST',
-        body: JSON.stringify(this.props.form.getFieldsValue())
-      }).then(function(response) {
-        console.log(response);
-        return response.json();
-      }).then(function(data) {
-        console.log(data);
-      }).catch(function(e) {
-        console.log("Oops, error");
-      });*/
+      //var form=findDOMNode(this.refs.form);
+      var form=$("#form")[0];
+       console.log("$form:",form);
+      var formData= new FormData(form);
+      formData.append('username', 'Chris');
+      console.log("formdata:",formData)
+      $.ajax({
+        type: 'POST',
+        url:'/analysis/rs/report/buildDataInfo',
+        data:formData ,
+        processData: false,  // 告诉jQuery不要去处理发送的数据
+        contentType: false,   // 告诉jQuery不要去设置Content-Type请求头
+        success:function(rm){
+          if(rm.code==1 ){
+            this.props.nextStep();
+            this.props.setDataInfo(rm.data);
+          }
+          console.log("result",rm.data)
+        }.bind(this)
+        //console.log(this.props.form.getFieldsValue());
+        //console.log(JSON.stringify(this.props.form.getFieldsValue()));
 
-
+      });
     });
   }
   handleReturn() {
-    var result = fetch('/analysis/rs/user/test')
-    result.then(function(response) {
-        console.log('response', response)
-        console.log('header', response.headers.get('Content-Type'))
-        return response.json()
-      }).then(function(data) {
-        console.log('got data', data)
-      }).catch(function(ex) {
-        console.log('failed', ex)
-      })
-      /*
-          fetch('http://localhost:8080/analysis/rs/user/test', {
-              credentials: 'include',
-              mode: 'no-cors',
-              method: 'POST',
-              body: new FormData(findDOMNode(this))
-            }).then(function(response) {
-              console.log(response);
-              console.log(response.json());
-            })*/
-      // console.log();
-      //history.back(-1)
   }
-  doValidateFile(rule, value, callback) {
+  validateReportName(rule, value, callback) {
+    if (!value) {
+      callback();
+    } else {
+      if(value.length>=5){
+         $.ajax({
+          type: "GET",
+          url:'/analysis/rs/report/isExists',
+          data:{
+            reportName:value
+          },
+          success:function(rm){
+            if(rm.data==true){
+              callback([new Error('isExists')]);
+            }
+            else{
+              callback();
+            }
+          }
+        });
+      }else{
+        callback([new Error('报告名称至少为 5 个字符')]);
+      }
+    }
+  }
+  validateFile(rule, value, callback) {
     var isCompleted = false;
     //console.log('changed')
     if (!value) {
@@ -142,6 +118,7 @@ class Uploader extends React.Component {
 
   }
   render() {
+    console.log("render:");
     const {
       getFieldProps,
       getFieldError,
@@ -151,10 +128,10 @@ class Uploader extends React.Component {
       //ref: "fileaa",
       rules: [{
         required: true,
-        min: 5,
+        min: 1,
         message: '报告名称至少为 5 个字符'
-      }, {
-        validator: this.reportExists
+      },{
+        validator: this.validateReportName
       }]
     });
     const fileProps = getFieldProps('dataFiles', {
@@ -164,7 +141,7 @@ class Uploader extends React.Component {
         min: 1,
         message: '报告wenjian 至少为 5 个字符'
       }, {
-        validator: this.doValidateFile.bind(this)
+        validator: this.validateFile.bind(this)
       }]
     });
     const chipNameProps = getFieldProps('chipName', {
@@ -182,9 +159,9 @@ class Uploader extends React.Component {
       }
     };
     return (
-      <Form horizontal encType="multipart/form-data">
+      <Form ref="form" id="form" horizontal encType="multipart/form-data">
         <FormItem ref="fileItem" label="数据文件" required {...formItemLayout} help={isFieldValidating('dataFiles') ? '校验中...' : (getFieldError('dataFiles') || []).join(', ')} hasFeedback >
-          <Input {...fileProps} name="dataFiles" type="file" ref="dataFile" multiple="multiple" accept=".csv" /><Button type="ghost" size="default" ><Icon type="file" />选择</Button>
+          <Input {...fileProps} name="files" type="file" ref="dataFile" multiple="multiple" accept=".csv" /><Button type="ghost" size="default" ><Icon type="file" />选择</Button>
         </FormItem>
     <FormItem label="报告名称" required {...formItemLayout} help={isFieldValidating('reportName') ? '校验中...' : (getFieldError('reportName') || []).join(', ')} hasFeedback >
           <Input {...nameProps} name="reportName" placeholder="数据处理后产生的报告名称"  />
