@@ -41,7 +41,7 @@ export default class Navigation extends React.Component {
             
           </Menu.Item>
           <Menu.Item key="report">
-          <Link to="/report"><Icon type="bar-chart" />报告</Link>
+          <Link to="/report/reportList"><Icon type="bar-chart" />报告</Link>
             
           </Menu.Item>
           <Menu.Item key="config">
